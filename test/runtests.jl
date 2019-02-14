@@ -1,2 +1,1 @@
-using Test
-using ResourcePools
+include("pooled_resource.jl")
