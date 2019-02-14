@@ -1,0 +1,2 @@
+module ResourcePools
+end # module
