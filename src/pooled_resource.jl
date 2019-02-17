@@ -12,7 +12,7 @@ end
 resource(r::AbstractPooledResource) = r.resource
 ref_count(r::AbstractPooledResource) = r.ref_count
 
-function release(r::AbstractPooledResource)
+function release!(r::AbstractPooledResource)
     if r.ref_count < 1
         throw(ArgumentError("Cannot release a resource with ref_count zero!"))
     end
@@ -22,6 +22,6 @@ function release(r::AbstractPooledResource)
     end
 end
 
-function retain(r::AbstractPooledResource)
+function retain!(r::AbstractPooledResource)
     r.ref_count += 1
 end

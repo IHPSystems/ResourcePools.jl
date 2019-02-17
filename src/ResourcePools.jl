@@ -4,8 +4,8 @@ export AbstractPooledResource,
     PooledResource,
     ref_count,
     resource,
-    release,
-    retain
+    release!,
+    retain!
 
 include("pooled_resource.jl")
 

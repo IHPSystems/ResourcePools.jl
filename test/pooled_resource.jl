@@ -9,16 +9,16 @@ using ResourcePools
     @test ref_count(r) == 1
     @test resource(r) === a
 
-    retain(r)
+    retain!(r)
     @test ref_count(r) == 2
 
-    release(r)
+    release!(r)
     @test ref_count(r) == 1
 
     @test !was_disposed
-    release(r)
+    release!(r)
     @test ref_count(r) == 0
     @test was_disposed
 
-    @test_throws ArgumentError release(r)
+    @test_throws ArgumentError release!(r)
 end
