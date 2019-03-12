@@ -2,10 +2,10 @@ using Test
 using ResourcePools
 
 @testset "PooledResource" begin
-    a = zeros(10, 10)
+    a = zeros(2, 2)
 
-    was_disposed = false
-    r = PooledResource(a, (r) -> was_disposed = true)
+    is_disposed = false
+    r = PooledResource(a, (r) -> is_disposed = true)
     @test ref_count(r) == 1
     @test resource(r) === a
 
@@ -15,10 +15,11 @@ using ResourcePools
     release!(r)
     @test ref_count(r) == 1
 
-    @test !was_disposed
+    @assert !is_disposed "is_disposed is true"
     release!(r)
     @test ref_count(r) == 0
-    @test was_disposed
+    @test is_disposed
 
     @test_throws ArgumentError release!(r)
+    @test_throws ArgumentError retain!(r)
 end

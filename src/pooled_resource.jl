@@ -16,12 +16,18 @@ function release!(r::AbstractPooledResource)
     if r.ref_count < 1
         throw(ArgumentError("Cannot release a resource with ref_count zero!"))
     end
+    @debug "Releasing $(r)"
     r.ref_count -= 1
     if r.ref_count == 0
+        @debug "Disposing $(r)"
         r.dispose(r)
     end
 end
 
 function retain!(r::AbstractPooledResource)
+    if r.ref_count < 1
+        throw(ArgumentError("Cannot retain a resource with ref_count zero!"))
+    end
+    @debug "Retaining $(r)"
     r.ref_count += 1
 end
