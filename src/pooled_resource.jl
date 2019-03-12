@@ -9,10 +9,10 @@ mutable struct PooledResource{T} <: AbstractPooledResource{T}
     end
 end
 
-resource(r::AbstractPooledResource) = r.resource
-ref_count(r::AbstractPooledResource) = r.ref_count
+resource(r) = r.resource
+ref_count(r) = r.ref_count
 
-function release!(r::AbstractPooledResource)
+function release!(r)
     if r.ref_count < 1
         throw(ArgumentError("Cannot release a resource with ref_count zero!"))
     end
@@ -24,7 +24,7 @@ function release!(r::AbstractPooledResource)
     end
 end
 
-function retain!(r::AbstractPooledResource)
+function retain!(r)
     if r.ref_count < 1
         throw(ArgumentError("Cannot retain a resource with ref_count zero!"))
     end
