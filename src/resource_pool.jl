@@ -15,13 +15,17 @@ end
 
 length(p::AbstractResourcePool) = length(p.pool)
 
-function take!(p::AbstractResourcePool{T})::AbstractPooledResource{T} where T
+function take!(p::AbstractResourcePool{T}) where T
     if length(p) < 1
         throw(ArgumentError("$p is empty!"))
     end
-    function dispose(r::AbstractPooledResource)
+    function dispose(r)
         @debug "Returning $(resource(r)) to $(p)"
         enqueue!(p.pool, resource(r))
     end
-    PooledResource(dequeue!(p.pool), dispose)
+    if T <: AbstractArray
+        PooledArray(dequeue!(p.pool), dispose)
+    else
+        PooledResource(dequeue!(p.pool), dispose)
+    end
 end
