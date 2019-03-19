@@ -28,7 +28,7 @@ using ResourcePools
         @test length(p) == 3
 
         a = take!(p)
-        @test typeof(a) <: PooledArray
+        @test typeof(a) <: AbstractPooledArray
         @test length(p) == 2
         @test ref_count(a) == 1
         @test sum(a) == 10

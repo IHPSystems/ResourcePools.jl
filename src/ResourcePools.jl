@@ -13,7 +13,8 @@ export AbstractResourcePool,
     length,
     take!
 
-export PooledArray
+export AbstractPooledArray,
+    PooledArray
 
 include("pooled_resource.jl")
 include("resource_pool.jl")
