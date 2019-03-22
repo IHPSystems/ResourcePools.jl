@@ -23,9 +23,12 @@ function take!(p::AbstractResourcePool{T}) where T
         @debug "Returning $(resource(r)) to $(p)"
         enqueue!(p.pool, resource(r))
     end
-    if T <: AbstractArray
-        PooledArray(dequeue!(p.pool), dispose)
+    r = dequeue!(p.pool)
+    if T <: DenseArray
+        PooledArray(r, dispose)
+    elseif T <: AbstractArray
+        PooledAbstractArray(r, dispose)
     else
-        PooledResource(dequeue!(p.pool), dispose)
+        PooledResource(r, dispose)
     end
 end

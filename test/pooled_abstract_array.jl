@@ -1,11 +1,11 @@
 using Test
 using ResourcePools
 
-@testset "PooledArray" begin
+@testset "PooledAbstractArray" begin
     a = [1 2; 3 4]
 
     is_disposed = false
-    r = PooledArray(a, (r) -> is_disposed = true)
+    r = PooledAbstractArray(a, (r) -> is_disposed = true)
     @test ref_count(r) == 1
     @test resource(r) === a
     @test r == a
