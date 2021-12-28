@@ -3,10 +3,10 @@ end
 
 mutable struct PooledArray{T,N} <: AbstractPooledDenseArray{T,N}
     array::Array{T,N}
-    ref_count::Int
+    ref_count::Threads.Atomic{Int}
     dispose::Function
     function PooledArray(a::Array{T,N}, dispose::Function) where {T,N}
-        new{T,N}(a, 1, dispose)
+        new{T,N}(a, Threads.Atomic{Int}(1), dispose)
     end
 end
 
