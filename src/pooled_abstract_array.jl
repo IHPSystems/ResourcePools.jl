@@ -3,10 +3,11 @@ end
 
 mutable struct PooledAbstractArray{T,N} <: AbstractPooledArray{T,N}
     array::AbstractArray{T,N}
-    ref_count::Threads.Atomic{Int}
+    ref_count::Int
+    lock::ReentrantLock
     dispose::Function
     function PooledAbstractArray(a::AbstractArray{T,N}, dispose::Function) where {T,N}
-        new{T,N}(a, Threads.Atomic{Int}(1), dispose)
+        new{T,N}(a, 1, ReentrantLock(), dispose)
     end
 end
 
