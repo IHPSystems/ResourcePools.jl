@@ -22,4 +22,42 @@ using ResourcePools
 
     @test_throws ArgumentError release!(r)
     @test_throws ArgumentError retain!(r)
+
+    @testset "Multi-threading" begin
+        function create()
+            a = zeros(2, 2)
+            is_disposed = false
+            r = PooledResource(a, (r) -> is_disposed = true)
+        end
+
+        N = 100
+
+        T = Threads.nthreads()
+
+        channels = [Channel(10) for t = 1:T]
+
+        function producer()
+            for i = 1:N
+                v = create()
+                for t = 1:T
+                    put!(channels[t], retain!(v))
+                end
+                release!(v)
+            end
+        end
+
+        function consumer(c)
+            for i = 1:N
+                v = take!(c)
+                release!(v)
+            end
+        end
+
+        @sync begin
+            Threads.@spawn producer()
+            for t = 1:T
+                Threads.@spawn consumer(channels[t])
+            end
+        end
+    end
 end

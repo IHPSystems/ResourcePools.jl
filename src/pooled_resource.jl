@@ -22,6 +22,7 @@ function release!(r)
         @debug "Disposing $(r)"
         r.dispose(r)
     end
+    return r
 end
 
 function retain!(r)
@@ -30,4 +31,5 @@ function retain!(r)
     end
     @debug "Retaining $(r)"
     r.ref_count += 1
+    return r
 end
