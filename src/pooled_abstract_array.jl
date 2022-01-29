@@ -3,11 +3,11 @@ end
 
 mutable struct PooledAbstractArray{T,N} <: AbstractPooledArray{T,N}
     array::AbstractArray{T,N}
-    ref_count::Int
+    ref_count::Ref{Int}
     lock::ReentrantLock
     dispose::Function
     function PooledAbstractArray(a::AbstractArray{T,N}, dispose::Function) where {T,N}
-        new{T,N}(a, 1, ReentrantLock(), dispose)
+        new{T,N}(a, Ref(1), ReentrantLock(), dispose)
     end
 end
 
