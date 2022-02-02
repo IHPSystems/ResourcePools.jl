@@ -10,6 +10,9 @@ ref_count_ref(c::ReferenceCountingCore) = c.ref_count
 ref_count_lock(c::ReferenceCountingCore) = c.lock
 dispose(c::ReferenceCountingCore) = c.dispose
 
+"""
+Release the resource `r` - i.e. decrement the reference count for `r` and dispose it if count reaches zero.
+"""
 function release!(r)
     lock(ref_count_lock(r))
     try
@@ -28,6 +31,9 @@ function release!(r)
     return r
 end
 
+"""
+Retain the resource `r` - i.e. increment the reference count for `r`.
+"""
 function retain!(r)
     lock(ref_count_lock(r))
     try
