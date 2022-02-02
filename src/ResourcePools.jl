@@ -18,6 +18,7 @@ export AbstractPooledArray,
     PooledAbstractArray,
     PooledArray
 
+include("interface.jl")
 include("pooled_resource.jl")
 include("resource_pool.jl")
 include("pooled_abstract_array.jl")
