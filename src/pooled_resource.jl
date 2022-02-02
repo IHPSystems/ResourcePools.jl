@@ -1,20 +1,34 @@
-abstract type AbstractPooledResource{T} end
-
-mutable struct PooledResource{T} <: AbstractPooledResource{T}
-    resource::T
+mutable struct ReferenceCountingCore
     ref_count::Ref{Int}
     lock::ReentrantLock
     dispose::Function
+    ReferenceCountingCore(dispose::Function) = new(Ref(1), ReentrantLock(), dispose)
+end
+
+ref_count(c::ReferenceCountingCore) = c.ref_count[]
+ref_count_ref(c::ReferenceCountingCore) = c.ref_count
+ref_count_lock(c::ReferenceCountingCore) = c.lock
+dispose(c::ReferenceCountingCore) = c.dispose
+
+abstract type AbstractPooledResource{T} end
+
+struct PooledResource{T} <: AbstractPooledResource{T}
+    resource::T
+    ref_count_core::ReferenceCountingCore
     function PooledResource(r::T, dispose::Function) where T
-        new{T}(r, Ref(1), ReentrantLock(), dispose)
+        new{T}(r, ReferenceCountingCore(dispose))
     end
 end
 
-resource(r) = r.resource
-ref_count(r) = r.ref_count[]
-ref_count_ref(r) = r.ref_count
-ref_count_lock(r) = r.lock
-dispose!(r) = r.dispose(r)
+resource(r::PooledResource) = r.resource
+
+# ReferenceCounting interface
+ref_count(r::PooledResource) = ref_count(r.ref_count_core)
+ref_count_ref(r::PooledResource) = ref_count_ref(r.ref_count_core)
+ref_count_lock(r::PooledResource) = ref_count_lock(r.ref_count_core)
+
+# Disposable interface
+dispose!(r::PooledResource) = dispose(r.ref_count_core)(r)
 
 function release!(r)
     lock(ref_count_lock(r))
