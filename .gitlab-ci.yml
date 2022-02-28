@@ -21,3 +21,8 @@ test: &test
   extends:
     - .julia.setup
     - .julia.test
+
+test without threads:
+  << : *test
+  variables:
+    CI_JULIA_TEST_THREADS: THREADS_OFF
