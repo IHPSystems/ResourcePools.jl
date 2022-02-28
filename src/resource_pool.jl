@@ -4,6 +4,14 @@ struct ResourcePool{T} <: AbstractResourcePool{T}
     pool::Queue{T}
 end
 
+function ResourcePool{T}(resources::AbstractVector{T}) where T
+    pool = Queue{T}()
+    for resource in resources
+        enqueue!(pool, resource)
+    end
+    return ResourcePool(pool)
+end
+
 function ResourcePool{T}(size::Int, create_resource::Function) where T
     pool = Queue{T}()
     for i = 1:size

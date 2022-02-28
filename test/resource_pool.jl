@@ -23,6 +23,7 @@ using ResourcePools
         @test length(p) == 1
         r = take!(p)
     end
+
     @testset "PooledArray" begin
         p = ResourcePool{Array{Int,2}}(3, () -> [1 2; 3 4])
         @test length(p) == 3
@@ -36,5 +37,27 @@ using ResourcePools
         release!(a)
         @test ref_count(a) == 0
         @test length(p) == 3
+    end
+
+    @static if VERSION >= v"1.3"
+        @testset "Multi-threading" begin
+            N = 1000
+            p = ResourcePool{Int}(collect(1:N))
+            T = Threads.nthreads()
+            O = 4 # Over-subscription factor
+
+            M = O * N / T
+
+            function consumer()
+                for i in 1:M
+                    v = take!(p)
+                    release!(v)
+                end
+            end
+
+            @sync for t in 1:T
+                Threads.@spawn consumer()
+            end
+        end
     end
 end
