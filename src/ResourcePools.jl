@@ -1,5 +1,7 @@
 module ResourcePools
 
+using DataStructures
+
 export AbstractPooledResource,
     PooledResource,
     ref_count,
@@ -7,7 +9,6 @@ export AbstractPooledResource,
     release!,
     retain!
 
-import Base: length, take!
 export AbstractResourcePool,
     ResourcePool,
     length,
