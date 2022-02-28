@@ -14,8 +14,7 @@ dispose(c::ReferenceCountingCore) = c.dispose
 Release the resource `r` - i.e. decrement the reference count for `r` and dispose it if count reaches zero.
 """
 function release!(r)
-    lock(ref_count_lock(r))
-    try
+    lock(ref_count_lock(r)) do
         if ref_count(r) < 1
             throw(ArgumentError("Cannot release a resource with ref_count zero!"))
         end
@@ -25,8 +24,6 @@ function release!(r)
             @debug "Disposing $(r)"
             dispose!(r)
         end
-    finally
-        unlock(ref_count_lock(r))
     end
     return r
 end
@@ -35,15 +32,12 @@ end
 Retain the resource `r` - i.e. increment the reference count for `r`.
 """
 function retain!(r)
-    lock(ref_count_lock(r))
-    try
+    lock(ref_count_lock(r)) do
         if ref_count(r) < 1
             throw(ArgumentError("Cannot retain a resource with ref_count zero!"))
         end
         @debug "Retaining $(r)"
         ref_count_ref(r)[] += 1
-    finally
-        unlock(ref_count_lock(r))
     end
     return r
 end
