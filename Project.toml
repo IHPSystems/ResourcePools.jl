@@ -1,7 +1,7 @@
 name = "ResourcePools"
 uuid = "16787047-0d73-522e-b8c7-4a818d739b35"
 authors = ["IHP Systems R&D <research@ihp.dk>"]
-version = "0.1.1"
+version = "0.2.0"
 
 [deps]
 DataStructures = "864edb3b-99cc-5e75-8d2d-829cb0a9cfe8"
