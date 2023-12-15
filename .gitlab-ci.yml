@@ -1,19 +1,23 @@
 include:
-  - project: 'ihp/julia/julia-gitlab-ci-templates'
-    ref: v1.1.0
-    file: '/.gitlab-ci_template.yaml'
+  - project: ihp/julia/julia-gitlab-ci-templates
+    ref: v1.5.0
+    file: /templates.gitlab-ci.yaml
+  - project: ihp/julia/julia-gitlab-ci-templates
+    ref: v1.5.0
+    file: /jobs/analyze_package.gitlab-ci.yaml
+  - project: ihp/julia/julia-gitlab-ci-templates
+    ref: v1.5.0
+    file: /jobs/analyze_tests.gitlab-ci.yaml
 
-test:1.0:
-  extends:
-    - .julia:1.0
-    - .julia.test.basic
+analyze_tests:
+  variables:
+    CI_JULIA_JET_TARGET_DEFINED_MODULES: "true"
 
-test:1.3:
+test: &test
+  stage: test
+  parallel:
+    matrix:
+      - CI_JULIA_VERSION: ["1.0", "1.3", "1.6", "1"]
   extends:
-    - .julia:1.3
-    - .julia.test.basic
-
-test:1.6:
-  extends:
-    - .julia:1.6
+    - .julia.setup
     - .julia.test
